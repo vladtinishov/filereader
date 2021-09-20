@@ -17,21 +17,22 @@
                     </label>
                     <input class="form-control" type="file" id="file" @input="gotFile">
                 </div>
-                <div class="file" v-if="isSelected">
+                <!-- <div class="file" v-if="isSelected">
                     <a
                         href="test_new.zip"
                         class="btn btn-primary"
                     >
                         Получить расписания
                     </a>
-                </div>
+                </div> -->
                 <div v-if="pages != 0" class="pages">
                     <button
                         @click="getTimetable(page)"
                         v-for="(page, index) in pages"
                         class="btn btn-light page_button"
+                        v-if="isNumber(files[page - 1].slice(4)[0])"
                     >
-                            {{page}}
+                            {{files[page - 1].slice(4)}}
                     </button>
                 </div>
             </div>
@@ -91,8 +92,11 @@ let app = new Vue({
         setCurrentPage(page) {
             this.currentFile = page;
             console.log(this.currentFile);
+        },
+        isNumber(char) {
+            return /\d/.test(char);
         }
-    }
+    },
 })
 </script>
 <style>
@@ -124,7 +128,8 @@ let app = new Vue({
 .pages {
     width: 100%;
     display: flex;
-    justify-content: space-between;
+    flex-direction: column;
+    justify-content: center;
 }
 .page_button {
     margin-top: 10px;
