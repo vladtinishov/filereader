@@ -17,14 +17,6 @@
                     </label>
                     <input class="form-control" type="file" id="file" @input="gotFile">
                 </div>
-                <!-- <div class="file" v-if="isSelected">
-                    <a
-                        href="test_new.zip"
-                        class="btn btn-primary"
-                    >
-                        Получить расписания
-                    </a>
-                </div> -->
                 <div v-if="pages != 0" class="pages">
                     <button
                         @click="getTimetable(page)"
@@ -44,6 +36,9 @@
             </div>
             <div class="table" v-html="currentPage"></div>
         </div>
+        <div class="preloader" v-if="preload">
+            <img src="preload.gif" alt="...">
+        </div>
     </div>
     </div>
 <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.js"></script>
@@ -60,6 +55,7 @@ let app = new Vue({
         button: '<button>button</button>',
         files: [],
         currentFile: 0,
+        preload: false,
     },
     methods: {
         selected() {
@@ -71,20 +67,22 @@ let app = new Vue({
             let file = document.getElementById("file").files[0];
             let formData = new FormData();
             formData.append("file", file);
-
+            this.preload = true;
             axios.post('createArchive.php', formData).then(data => {
                 this.file = data.data.file;
                 this.pages = data.data.pages;
                 this.files = data.data.files;
                 if (data.data.files.length === 0) alert('no files');
-            });
+            }).then(() => {console.log('is done');this.preload = false});
         },
         getTimetable(page) {
+            this.preload = true;
             this.setCurrentPage(this.files[page - 1])
             console.log(page);
             this.isTableActive = true;
             axios.get('getPage.php?page=' + page + '&file=' + this.file)
                 .then(data => this.currentPage = data.data)
+                .then(() => this.preload = false)
         },
         closeTable() {
             this.isTableActive = false;
@@ -138,6 +136,16 @@ let app = new Vue({
     width: 100%;
     display: flex;
     justify-content: space-between;
+}
+.preloader {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: white;
+    z-index: 19999;
 }
 </style>
 </body>
