@@ -26,7 +26,7 @@ class CreateDocument
     }
     public function createTable($tableData, $index, $phpWord)
     {
-        $table = $this->getSection($phpWord)->addSection()->addTable();
+        $table = $this->getSection($phpWord)->addSection()->addTable(['borderSize' => '1', 'borderColor' => '808080']);
 
         $lessonTextStyle = [
             'size' => 10,
@@ -40,6 +40,17 @@ class CreateDocument
         $daysTextStyle = [
             'size' => 10,
             'color' => '02146B'
+        ];
+        $days = [
+            '8:30-9:35',
+            '8:45-9:50',
+            '10:00-11:05',
+            '11:30-12:35',
+            '11:45-12:50',
+            '13:00-14:05',
+            '13:15-14:20',
+            '14:30-15:35',
+            '14:45-1550'
         ];
         $groupName = implode($tableData[$index][1]);
         if (strlen($groupName) > 1000) {

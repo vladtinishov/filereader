@@ -1,6 +1,10 @@
 <?php
 namespace Classes;
+
+use Exception;
 use PhpOffice\PhpWord\Element\Table;
+use PhpOffice\PhpWord\Element\TextBreak;
+
 require 'vendor/autoload.php';
 
 class TableReader
@@ -42,34 +46,51 @@ class TableReader
                     $i = 0;
                     $column = [];
                     foreach ($row->getCells() as $cells) {
-                        $cellText = [];
-                        $cellsWidth = $cells->getWidth();
-                        foreach ($cells->getElements() as $cell) {
-                            foreach ($cell->getElements() as $element) {
-                                $cellText[] = $element->getText();
-                            }
-                        }
-                        if ($cellsWidth > 10000) $isLongCell = true;
-                        else $isLongCell = false;
-                        $currentCellsWidth = $cells->getWidth();
-                        if ($cellWidth) {
-                            if ($isLongCell) {
-                                $countOfCells = intdiv($currentCellsWidth, $cellWidth);
-                                for ($i=0; $i < $countOfCells - 1; $i++) {
-                                    $column[] = $cellText;
+                        try {
+                            $cellText = [];
+                            try {
+                                $cellsWidth = $cells->getWidth();
+                                if ($cellWidth) throw new Exception('error');
+                            } catch (Exception $e) {}
+                            foreach ($cells->getElements() as $cell) {
+                                if ($cell instanceof TextBreak) {
+                                    continue;
                                 }
-                                $countOfCells = 0;
+                                try {
+                                    foreach ($cell->getElements() as $element) {
+                                        $cellText[] = $element->getText();
+                                        if (!$cell) {
+                                            throw new Exception($element->getText());
+                                        }
+                                    }
+                                } catch (Exception $e) {
+                                    // echo $e->getMessage();
+                                }
                             }
-                            else if ($currentCellsWidth > $cellWidth + 200 && !$isLongCell) {
-                                if ($cellText) {
-                                    if ($cellText[0]) {
+                            if ($cellsWidth > 10000) $isLongCell = true;
+                            else $isLongCell = false;
+                            $currentCellsWidth = $cells->getWidth();
+                            if ($cellWidth) {
+                                if ($isLongCell) {
+                                    $countOfCells = intdiv($currentCellsWidth, $cellWidth);
+                                    for ($i=0; $i < $countOfCells - 1; $i++) {
                                         $column[] = $cellText;
+                                    }
+                                    $countOfCells = 0;
+                                }
+                                else if ($currentCellsWidth > $cellWidth + 200 && !$isLongCell) {
+                                    if ($cellText) {
+                                        if ($cellText[0]) {
+                                            $column[] = $cellText;
+                                        }
                                     }
                                 }
                             }
+                            $column[] = $cellText;
+                            $i += 1;
+                        } catch (Exception $e) {
+                            echo $e->getMessage();
                         }
-                        $column[] = $cellText;
-                        $i += 1;
                     }
                     if (count($data) === 1) {
                         $cellWidth = $elements[$index]->getRows()[1]->getCells()[2]->getWidth();

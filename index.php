@@ -30,7 +30,7 @@
                         @click="getTimetable(page)"
                         v-for="(page, index) in pages"
                         class="btn btn-light page_button"
-                        v-if="isNumber(files[page - 1].slice(4)[0])"
+                        v-if="isNumber(files[page - 1].slice(4)[0]) && files[page - 1].slice(4)[1] != ','"
                     >
                             {{files[page - 1].slice(4)}}
                     </button>
@@ -76,7 +76,7 @@ let app = new Vue({
                 this.file = data.data.file;
                 this.pages = data.data.pages;
                 this.files = data.data.files;
-                console.log(data.data.files);
+                if (data.data.files.length === 0) alert('no files');
             });
         },
         getTimetable(page) {
