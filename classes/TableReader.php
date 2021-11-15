@@ -58,13 +58,14 @@ class TableReader
                                 }
                                 try {
                                     foreach ($cell->getElements() as $element) {
+                                        if ($element instanceof TextBreak) continue;
                                         $cellText[] = $element->getText();
                                         if (!$cell) {
                                             throw new Exception($element->getText());
                                         }
                                     }
                                 } catch (Exception $e) {
-                                    // echo $e->getMessage();
+                                    echo get_class($element) . 'DLKDKDKLDKLDKLDKLDKLKDKLDKLDKLDKLDKLDKDKL';
                                 }
                             }
                             if ($cellsWidth > 10000) $isLongCell = true;

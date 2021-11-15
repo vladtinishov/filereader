@@ -1,0 +1,204 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Загрузка расписания</title>
+    <link href="style.css" rel="stylesheet" type="text/css">
+    <link href="cstyles.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+    <div class="hd">
+        <h1>
+            ТАРАЗСКИЙ РЕГИОНАЛЬНЫЙ УНИВЕРСИТЕТ<br>
+            ИМ. М.Х. ДУЛАТИ<br>
+        </h1>
+    </div>
+    <div class="mnvh">
+        <p>
+            ЗАГРУЗКА РАСПИСАНИЯ
+        </p>
+    </div>
+    <div class="main">
+        <table width="100%">
+            <tbody>
+                <tr>
+                    <td width="100%" class="rtmn">
+                        <div class="sl" id="app">
+                            <div class="upload_form">
+                                <span class="description">
+                                    Для загрузки расписания выберите файл расписания
+                                    <br>
+                                    <a href="fileRequirements.html">соответсвующий рекомендациям</a>
+                                </span>
+                                <form>
+                                <div class="input">
+                                        <div class="lable">Факультет</div>
+                                        <select class="styled-select" v-model="uploadData.faculty">
+                                            <option v-for="faculty in faculties">{{faculty}}</option>
+                                        </select>
+                                    </div>
+                                    <div class="input">
+                                        <div class="lable">Курс</div>
+                                        <select class="styled-select" v-model="uploadData.course">
+                                            <option>1 курс</option>
+                                            <option>2 курс</option>
+                                            <option>3 курс</option>
+                                            <option>4 курс</option>
+                                            <option>5 курс</option>
+                                        </select>
+                                    </div>
+                                    <div class="input">
+                                        <div class="lable">Язык</div>
+                                        <select class="styled-select" v-model="uploadData.language">
+                                            <option>русский</option>
+                                            <option>казахский</option>
+                                        </select>
+                                    </div>
+                                    <div class="input">
+                                        <div class="lable">Файл</div>
+                                        <input @input="addFile" id="file" class="mntl" type="file">
+                                    </div>
+                                </form>
+                                <button class="mntl upload_button disabled" v-if="isButtonDisabled">
+                                    Загрузить
+                                </button>
+                                <button class="mntl upload_button" v-else @click="getFiles">
+                                    Загрузить
+                                </button>
+                                <div class="files" v-if="showFiles">
+                                    <ul class="files_ul">
+                                        <li v-for="file in files">
+                                            <a :href="file">{{ file }}</a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+
+<script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<script>
+let app = new Vue({
+    el: '#app',
+    data: {
+        files: [],
+        table: '',
+        faculties: [],
+        uploadData: {
+            faculty: '',
+            course: '',
+            language: '',
+            file: {},
+        },
+        showFiles: false,
+        isButtonDisabled: true,
+    },
+    mounted() {
+        this.getFaculties();
+    },
+    methods: {
+        getFaculties() {
+            axios.get('getData.php', { params: { get_faculties: 'asdf'}})
+                .then(data => this.faculties = data.data.faculties);
+        },
+        async addFile() {
+            let timetable = document.getElementById("file").files[0];
+            let formData = new FormData();
+            formData.append("timetable", timetable);
+            const result = await axios.post('getData.php', formData);
+            this.uploadData.file = result.data;
+            this.isButtonDisabled = false;
+        },
+        async getFiles() {
+            try {
+                const result = await axios.get('getData.php', {
+                    params: {
+                        timetableName: this.uploadData.file,
+                        path: this.getFilesPath,
+                    }
+                });
+                this.showFiles = true;
+                this.files = result.data.files;
+            } catch (e) {
+                alert('Произошла ошибка чтения файла');
+            }
+            document.getElementById("file").value = "";
+        },
+    },
+    computed: {
+        getFilesPath() {
+            const upData = this.uploadData;
+            return upData.faculty + '/' + upData.course + '/' + upData.language;
+        }
+    }
+})
+</script>
+<style scoped>
+#app {
+    display: flex;
+    justify-content: center;
+    margin: 20px 0;
+    padding: 20px 0;
+    text-align: center;
+
+}
+.upload_button {
+    padding: 10px 15px;
+    margin-top: 20px;
+    cursor: pointer;
+}
+
+.description {
+    font-weight: 700;
+}
+
+.upload_form {
+    padding: 10px;
+}
+.upload_form button {
+    display: block;
+}
+
+.styled-select {
+    padding: 5px;
+    width: 400px;
+}
+
+.input {
+    display: flex;
+    align-items: center;
+    width: 500px;
+    justify-content: space-between;
+    font-weight: 600;
+    margin: 10px 0;
+}
+
+.files {
+    text-align: left;
+    width: 500px;
+}
+.files_ul li {
+    margin: 5px 0;
+}
+
+.disabled {
+    background: rgb(204, 204, 204);
+    cursor: not-allowed;
+}
+
+.mntl {
+    margin: 0;
+}
+
+</style>
+</body>
+</html>

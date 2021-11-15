@@ -43,10 +43,14 @@ $body = '';
  * file sections
  */
 $sections = $phpObject->getSections();
-
+/**
+ * reading tables
+ */
 $tableReader = new Classes\TableReader;
 $data = $tableReader->tableRead($sections);
-
+/**
+ * create document
+ */
 $tableFormater = new Classes\TableFormat;
 $tableData = $tableFormater->getFormatedTable($data);
 $tableCreater = new Classes\CreateDocument;

@@ -1,0 +1,49 @@
+.red {
+    color: #A52A2A;
+    font-weight: 700;
+}
+
+.sl p {
+    margin-left: 20px;
+}
+
+.tlf {
+    margin-bottom: 20px;
+}
+
+.open-get-timetable {
+    display: flex;
+    align-items: center;
+}
+
+.open-get-timetable span {
+    margin-right: 10px;
+}
+
+.pers-timetable {
+    margin: 20px;
+}
+
+.pers-timetable td {
+    border: 1px solid black;
+    padding: 2px;
+}
+
+.pers-timetable td {
+    width: 100px;
+    color: #A52A2A;
+    font-weight: 700;
+}
+
+.pers-timetable td:last-child {
+    width: 80%;
+    color: #000000;
+    font-weight: 500;
+}
+
+.cclose {
+    margin-left: 10px;
+    color: rgb(83, 22, 22);
+    text-decoration: underline;
+    cursor: pointer;
+}

@@ -24,7 +24,7 @@ class CreateDocument
 
         return $phpWord;
     }
-    public function createTable($tableData, $index, $phpWord)
+    public function createTable($tableData, $index, $phpWord, $directory)
     {
         $table = $this->getSection($phpWord)->addSection()->addTable(['borderSize' => '1', 'borderColor' => '808080']);
 
@@ -69,14 +69,12 @@ class CreateDocument
         $files = [];
         $fileName = '';
         if (gettype($groupName) === 'array') {
-            $fileName = 'dir/' . implode('', $groupName) . '.docx';
-            // echo '<pre>';
-            // var_dump($fileName);
+            $fileName = $directory . implode('', $groupName) . '.docx';
             $objWriter->save($fileName);
             $files[] = $fileName;
         } else {
             $groupName = str_replace('/', '', $groupName);
-            $groupName = 'dir/' . $groupName . '.docx';
+            $groupName = 'uploads/' . $directory . '/' . $groupName . '.docx';
             $objWriter->save($groupName);
             $files[] = $groupName;
         }

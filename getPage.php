@@ -6,17 +6,30 @@ require 'classes/CreateDocument.php';
 require 'classes/TableRender.php';
 use PhpOffice\PhpWord\IOFactory;
 
-if (isset($_GET['page']) && isset($_GET['file'])) {
-    $objReader = IOFactory::createReader('Word2007');
-    $phpObject = $objReader->load($_GET['file']);
-    $sections = $phpObject->getSections();
+$objReader = IOFactory::createReader('Word2007');
+$phpObject = $objReader->load('timetables/3дис.docx');
+$sections = $phpObject->getSections();
 
-    $tableReader = new Classes\TableReader;
-    $data = $tableReader->tableRead($sections);
+$tableReader = new Classes\TableReader;
+$data = $tableReader->tableRead($sections);
 
-    $tableFormater = new Classes\TableFormat;
-    $tableData = $tableFormater->getFormatedTable($data);
+$tableFormater = new Classes\TableFormat;
+$tableData = $tableFormater->getFormatedTable($data);
 
-    $table = new Classes\TableRender;
-    $table->renderTable($tableData, $_GET['page'] + 1);
-}
+$table = new Classes\TableRender;
+$table->renderTable($tableData, 2);
+
+// if (isset($_GET['page']) && isset($_GET['file'])) {
+//     $objReader = IOFactory::createReader('Word2007');
+//     $phpObject = $objReader->load($_GET['file']);
+//     $sections = $phpObject->getSections();
+
+//     $tableReader = new Classes\TableReader;
+//     $data = $tableReader->tableRead($sections);
+
+//     $tableFormater = new Classes\TableFormat;
+//     $tableData = $tableFormater->getFormatedTable($data);
+
+//     $table = new Classes\TableRender;
+//     $table->renderTable($tableData, $_GET['page'] + 1);
+// }
