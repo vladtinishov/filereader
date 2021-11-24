@@ -86,7 +86,7 @@ function createFiles($file, $directory) {
         }
     }
 
-    echo $directory;
+    echo json_encode($dataToReturn['files']);
 }
 
 function getGroups($directory) {

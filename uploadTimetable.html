@@ -31,7 +31,7 @@
                                 <span class="description">
                                     Для загрузки расписания выберите файл расписания
                                     <br>
-                                    <a href="fileRequirements.html">соответсвующий рекомендациям</a>
+                                    <a href="requires/Список требований к файлам расписания.docx">соответсвующий рекомендациям</a>
                                 </span>
                                 <form>
                                 <div class="input">
@@ -71,10 +71,12 @@
                                 <div class="files" v-if="showFiles">
                                     <ul class="files_ul">
                                         <li v-for="file in files">
-                                            <a :href="file">{{ file }}</a>
+                                            <a href="#" @click="getTable(file)">{{ file }}</a>
                                         </li>
                                     </ul>
                                 </div>
+                            </div>
+                            <div class="table" v-html="table">
                             </div>
                         </div>
                     </td>
@@ -127,12 +129,21 @@ let app = new Vue({
                     }
                 });
                 this.showFiles = true;
-                this.files = result.data.files;
+                this.files = result.data;
+                console.log(result.data);
             } catch (e) {
                 alert('Произошла ошибка чтения файла');
             }
             document.getElementById("file").value = "";
         },
+        getTable(file) {
+            console.log(file);
+            axios.get('getPage.php', {params: {file: file}})
+                .then(data => {
+                    this.table = data.data;
+                    console.log(data);
+                });
+        }
     },
     computed: {
         getFilesPath() {
@@ -146,10 +157,23 @@ let app = new Vue({
 #app {
     display: flex;
     justify-content: center;
+    align-items: center;
+    flex-direction: column;
     margin: 20px 0;
     padding: 20px 0;
     text-align: center;
 
+}
+
+.table {
+    width: 100%;
+}
+.table tr {
+    border: 1px solid black;
+}
+.table td {
+    margin: 0;
+    border: 1px solid black;
 }
 .upload_button {
     padding: 10px 15px;

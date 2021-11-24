@@ -63,14 +63,14 @@
                                     Получить
                                 </button>
                                 <button class="mntl upload_button" v-else >
-                                    <a @click="clearData" :href="hrefToFile">Получить</a>
+                                    <span @click="getPage">Получить</span>
                                 </button>
-                                <div class="files" v-if="showFiles">
-                                    <ul class="files_ul">
-                                        <li v-for="file in files">
-                                            <a :href="file">{{ file }}</a>
-                                        </li>
-                                    </ul>
+                            </div>
+                            <div class="tableContainer" v-if="showTimeTable">
+                                <button class="mntl upload_button">
+                                    <a :href="hrefToFile" @click="clearData">Скачать</a>
+                                </button>
+                                <div class="table" v-html="timetable">
                                 </div>
                             </div>
                         </div>
@@ -99,6 +99,9 @@ let app = new Vue({
         },
         showFiles: false,
         isButtonDisabled: true,
+        timetable: '',
+        showTimeTable: false,
+        hrefToFile: '',
     },
     mounted() {
         this.getFaculties();
@@ -112,6 +115,15 @@ let app = new Vue({
             axios.get('getData.php', { params: { get_groups: this.getFilesPath }})
                 .then(data => this.groups = data.data.groups).then(console.log(this.groups));
         },
+        getPage() {
+            this.setHrefToFile();
+            axios.get('getPage.php', { params: { file: this.hrefToFile}}).then(
+                data => {
+                    this.timetable = data.data;
+                    this.showTimeTable = true;
+                }
+            );
+        },
         clearData() {
             this.getTableData = {
                 faculty: '',
@@ -119,16 +131,10 @@ let app = new Vue({
                 language: '',
                 groupe: {},
             }
-        }
-    },
-    computed: {
-        getFilesPath() {
-            const upData = this.getTableData;
-            return upData.faculty + '/' + upData.course + '/' + upData.language
         },
-        hrefToFile() {
+        setHrefToFile() {
             const upData = this.getTableData;
-            return 'uploads/'
+            this.hrefToFile = 'uploads/'
                     +  upData.faculty
                     + '/'
                     + upData.course
@@ -137,6 +143,12 @@ let app = new Vue({
                     + '/'
                     + upData.groupe;
         }
+    },
+    computed: {
+        getFilesPath() {
+            const upData = this.getTableData;
+            return upData.faculty + '/' + upData.course + '/' + upData.language
+        },
     }
 })
 </script>
@@ -147,6 +159,8 @@ let app = new Vue({
     margin: 20px 0;
     padding: 20px 0;
     text-align: center;
+    flex-direction: column;
+    align-items: center;
 
 }
 .upload_button {
@@ -197,6 +211,20 @@ let app = new Vue({
     margin: 0;
 }
 
+.table {
+    width: 100%;
+}
+.table tr {
+    border: 1px solid black;
+}
+.table td {
+    margin: 0;
+    border: 1px solid black;
+}
+
+.tableContainer {
+    margin-top: 20px;
+}
 </style>
 </body>
 </html>

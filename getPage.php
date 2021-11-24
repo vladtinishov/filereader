@@ -6,8 +6,10 @@ require 'classes/CreateDocument.php';
 require 'classes/TableRender.php';
 use PhpOffice\PhpWord\IOFactory;
 
+$file = $_GET['file'];
+
 $objReader = IOFactory::createReader('Word2007');
-$phpObject = $objReader->load('timetables/3дис.docx');
+$phpObject = $objReader->load($file);
 $sections = $phpObject->getSections();
 
 $tableReader = new Classes\TableReader;
